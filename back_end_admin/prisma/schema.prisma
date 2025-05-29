@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Medecin {
+  id         Int     @id @default(autoincrement())
+  nom        String
+  specialite String?
+
+  patients Patient[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Patient {
+  id               Int      @id @default(autoincrement())
+  prenom           String
+  nom              String
+  date_naissance   DateTime
+  sexe             String
+  type_identifiant String
+  identifiant      String
+  photo_profil     String?
+
+  telephone String?
+  email     String?
+  adresse   String?
+
+  groupe_sanguin      String?
+  niveau_autonomie    String?
+  taille_cm           Int?
+  poids_kg            Int?
+  statut_tabac        String?
+  consommation_alcool String?
+
+  statuts        String?
+  service        String?
+  priorite       String?
+  dernier_visite DateTime?
+
+  etat_civil      String?
+  profession      String?
+  langue_preferee String?
+  consentement    Boolean @default(false)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  contacts_urgence  ContactUrgence[]
+  documents_patient DocumentPatient[]
+  historiques       HistoriquePatient[]
+  allergies         Allergie[]
+  pathologies       Pathologie[]
+  antecedents       AntecedentMedical[]
+  assurances        Assurance[]
+  credentials       Authentification?
+  medecin           Medecin?            @relation(fields: [medecinId], references: [id])
+  medecinId         Int?
+}
+
+model ContactUrgence {
+  id          Int     @id @default(autoincrement())
+  patient_id  Int
+  nom_complet String
+  relation    String?
+  telephone   String
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model DocumentParams {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model DocumentPatient {
+  id          Int      @id @default(autoincrement())
+  patient_id  Int
+  nom_fichier String?
+  url         String?
+  date_upload DateTime @default(now())
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  type    String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([patient_id])
+}
+
+model HistoriquePatient {
+  id              Int      @id @default(autoincrement())
+  patient_id      Int
+  attribut        String
+  ancienne_valeur String?
+  nouvelle_valeur String?
+  modifie_le      DateTime @default(now())
+  modifie_par     String?
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model AllergieParams {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Allergie {
+  id         Int      @id @default(autoincrement())
+  patient_id Int
+  patient    Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  allergie   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([patient_id, allergie])
+  @@index([patient_id])
+}
+
+model PathologieParams {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Pathologie {
+  id         Int      @id @default(autoincrement())
+  patient_id Int
+  patient    Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  pathologie String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([patient_id, pathologie])
+  @@index([patient_id])
+}
+
+model AntecedentParams {
+  id         Int      @id @default(autoincrement())
+  nom        String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model AntecedentMedical {
+  id              Int       @id @default(autoincrement())
+  patient_id      Int
+  patient         Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  antecedent      String
+  antecedant_date DateTime?
+  specialty       String?
+  description     String?
+  document1       String?
+  document2       String?
+  document3       String?
+  document4       String?
+  document5       String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([patient_id])
+}
+
+model Assurance {
+  id            Int      @id @default(autoincrement())
+  patient_id    Int
+  patient       Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  assurance     String
+  numero_police String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+}
+
+model Authentification {
+  id              Int      @id @default(autoincrement())
+  patient_id      Int      @unique
+  patient         Patient  @relation(fields: [patient_id], references: [id], onDelete: Cascade)
+  nom_utilisateur String
+  mot_de_passe    String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+}
+
+model TypeIdentite {
+  id          Int     @id @default(autoincrement())
+  nom         String  @unique
+  description String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
