@@ -1,0 +1,56 @@
+"use client"
+
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Heart, ShieldX, ArrowLeft } from "lucide-react"
+
+export default function UnauthorizedPage() {
+  const router = useRouter()
+
+  const handleGoBack = () => {
+    router.back()
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-10 px-4 flex flex-col items-center">
+      <div className="container max-w-6xl">
+        <div className="flex items-center mb-8">
+          <Heart className="h-8 w-8 text-[#1e3a8a] mr-2" fill="#1e3a8a" strokeWidth={1} />
+          <h1 className="text-2xl font-bold text-[#1e3a8a]">HealthCare</h1>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-md mx-auto">
+        <Card className="w-full border-0 shadow-lg overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-[#1e3a8a] to-[#2d4eaa] pb-6 pt-8 text-white text-center">
+            <div className="flex justify-center mb-4">
+              <div className="bg-white/10 p-4 rounded-full">
+                <ShieldX className="h-12 w-12 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold">Unauthorized Access</CardTitle>
+            <CardDescription className="text-gray-100 mt-2">
+              You don't have permission to access this page
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 pb-8 px-6 text-center">
+            <p className="text-gray-600 mb-8">
+              This area requires specific permissions or authentication that you currently don't have. Please contact
+              your administrator if you believe this is an error.
+            </p>
+
+            <Button onClick={handleGoBack} className="bg-[#1e3a8a] hover:bg-[#1e3a8a]/90 text-white transition-colors">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Go Back
+            </Button>
+          </CardContent>
+        </Card>
+
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p>Need help? Contact our support team at support@healthcare.com</p>
+        </div>
+      </div>
+    </div>
+  )
+}
